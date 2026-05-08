@@ -212,105 +212,115 @@ class _MenuDetailSheetState extends State<_MenuDetailSheet> {
     return Container(
       height: height,
       color: AppColors.beigeLight,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Stack(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              NetworkRoundedImage(
-                url: widget.menu.pictureUrl,
-                size: 180,
-                detailMode: true,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      NetworkRoundedImage(
+                        url: widget.menu.pictureUrl,
+                        size: 180,
+                        detailMode: true,
+                      ),
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 19),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.menu.name,
+                              style: const TextStyle(
+                                fontFamily: "CarterOne",
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(widget.menu.desc),
+                            const SizedBox(height: 12),
+                            ...widget.menu.subitems.map(
+                              (s) => RadioListTile<bool>(
+                                dense: true,
+                                value: true,
+                                groupValue: picked.containsKey(s.name),
+                                onChanged: (_) =>
+                                    setState(() => picked[s.name] = s),
+                                title: Text(s.name),
+                                subtitle: s.price == 0
+                                    ? null
+                                    : Text('+ Rp. ${formatPrice(s.price)}'),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              Positioned(
-                top: 32,
-                right: 12,
-                child: IconButton(
-                  iconSize: 32,
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close, color: AppColors.brownDark),
+              Container(
+                color: AppColors.creamBackground,
+                padding: const EdgeInsets.fromLTRB(19, 9, 19, 23),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Total Item Price:',
+                          style: const TextStyle(
+                            fontFamily: "CarterOne",
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.orangePrimary,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          'Rp. ${formatPrice(total)}',
+                          style: const TextStyle(
+                            fontFamily: "CarterOne",
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.orangePrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    PrimaryButton(
+                      text: 'Add To Cart',
+                      onPressed: () {
+                        context.read<CartState>().add(
+                          CartLine(
+                            name: widget.menu.name,
+                            description: widget.menu.desc,
+                            basePrice: widget.menu.price,
+                            selectedSubitems: picked,
+                            quantity: qty,
+                            menuId: widget.menu.id,
+                            subitemIds: picked.values.map((e) => e.id).toList(),
+                            imageUrl: widget.menu.pictureUrl,
+                          ),
+                        );
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 19),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.menu.name,
-                  style: const TextStyle(
-                    fontFamily: "CarterOne",
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(widget.menu.desc),
-                const SizedBox(height: 12),
-                ...widget.menu.subitems.map(
-                  (s) => RadioListTile<bool>(
-                    dense: true,
-                    value: true,
-                    groupValue: picked.containsKey(s.name),
-                    onChanged: (_) => setState(() => picked[s.name] = s),
-                    title: Text(s.name),
-                    subtitle: s.price == 0
-                        ? null
-                        : Text('+ Rp. ${formatPrice(s.price)}'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Spacer(),
-          Container(
-            color: AppColors.creamBackground,
-            padding: const EdgeInsets.fromLTRB(19, 9, 19, 23),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Total Item Price:',
-                      style: const TextStyle(
-                        fontFamily: "CarterOne",
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.orangePrimary,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      'Rp. ${formatPrice(total)}',
-                      style: const TextStyle(
-                        fontFamily: "CarterOne",
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.orangePrimary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                PrimaryButton(
-                  text: 'Add To Cart',
-                  onPressed: () {
-                    context.read<CartState>().add(
-                      CartLine(
-                        name: widget.menu.name,
-                        description: widget.menu.desc,
-                        basePrice: widget.menu.price,
-                        selectedSubitems: picked,
-                        quantity: qty,
-                        menuId: widget.menu.id,
-                        subitemIds: picked.values.map((e) => e.id).toList(),
-                        imageUrl: widget.menu.pictureUrl,
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+          Positioned(
+            top: 32,
+            right: 12,
+            child: IconButton(
+              iconSize: 32,
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.close, color: AppColors.brownDark),
             ),
           ),
         ],
