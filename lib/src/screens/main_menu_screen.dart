@@ -142,6 +142,7 @@ class _MenuCard extends StatelessWidget {
         onTap: () => showModalBottomSheet(
           context: context,
           isScrollControlled: true,
+          useSafeArea: true,
           builder: (_) => _MenuDetailSheet(menu: menu),
         ),
         child: SizedBox(
@@ -207,48 +208,66 @@ class _MenuDetailSheetState extends State<_MenuDetailSheet> {
         (widget.menu.price +
             picked.values.fold<int>(0, (p, e) => p + e.price.toInt())) *
         qty;
+    final height = MediaQuery.of(context).size.height;
     return Container(
+      height: height,
       color: AppColors.beigeLight,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NetworkRoundedImage(url: widget.menu.pictureUrl, size: 180),
-          const SizedBox(height: 12),
-          Text(
-            widget.menu.name,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          Stack(
+            children: [
+              NetworkRoundedImage(
+                url: widget.menu.pictureUrl,
+                size: 180,
+                detailMode: true,
+              ),
+              Positioned(
+                top: 32,
+                right: 12,
+                child: IconButton(
+                  iconSize: 32,
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close, color: AppColors.brownDark),
+                ),
+              ),
+            ],
           ),
-          Text(widget.menu.desc),
           const SizedBox(height: 12),
-          ...widget.menu.subitems.map(
-            (s) => RadioListTile<bool>(
-              dense: true,
-              value: true,
-              groupValue: picked.containsKey(s.name),
-              onChanged: (_) => setState(() => picked[s.name] = s),
-              title: Text(s.name),
-              subtitle: s.price == 0
-                  ? null
-                  : Text('+ Rp. ${formatPrice(s.price)}'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 19),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.menu.name,
+                  style: const TextStyle(
+                    fontFamily: "CarterOne",
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(widget.menu.desc),
+                const SizedBox(height: 12),
+                ...widget.menu.subitems.map(
+                  (s) => RadioListTile<bool>(
+                    dense: true,
+                    value: true,
+                    groupValue: picked.containsKey(s.name),
+                    onChanged: (_) => setState(() => picked[s.name] = s),
+                    title: Text(s.name),
+                    subtitle: s.price == 0
+                        ? null
+                        : Text('+ Rp. ${formatPrice(s.price)}'),
+                  ),
+                ),
+              ],
             ),
           ),
-          // Row(
-          //   children: [
-          //     IconButton(
-          //       onPressed: () => setState(() => qty = qty > 1 ? qty - 1 : 1),
-          //       icon: const Icon(Icons.remove),
-          //     ),
-          //     Text('$qty'),
-          //     IconButton(
-          //       onPressed: () => setState(() => qty++),
-          //       icon: const Icon(Icons.add),
-          //     ),
-          //   ],
-          // ),
+          const Spacer(),
           Container(
             color: AppColors.creamBackground,
-            padding: EdgeInsetsGeometry.fromLTRB(19, 9, 19, 23),
+            padding: const EdgeInsets.fromLTRB(19, 9, 19, 23),
             child: Column(
               children: [
                 Row(
@@ -261,7 +280,7 @@ class _MenuDetailSheetState extends State<_MenuDetailSheet> {
                         color: AppColors.orangePrimary,
                       ),
                     ),
-                    Expanded(child: SizedBox()),
+                    const Spacer(),
                     Text(
                       'Rp. ${formatPrice(total)}',
                       style: const TextStyle(
