@@ -60,7 +60,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         children: [
           AppHeader(
             showSearch: true,
-            onBack: () => context.pop(),
+            onBack: () => context.replace("/qr_scanner"),
             outlet: app.outletName,
             table: app.tableNumber,
             searchController: search,
@@ -114,7 +114,11 @@ class _MenuCategoryWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 17),
           child: Text(
             category.category,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            style: const TextStyle(
+              fontFamily: "CarterOne",
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         const Padding(
@@ -164,13 +168,14 @@ class _MenuCard extends StatelessWidget {
                       menu.desc,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 11),
+                      style: const TextStyle(fontFamily: "Actor", fontSize: 12),
                     ),
                     const Spacer(),
                     Text(
                       'Rp. ${formatPrice(menu.price)}',
                       style: const TextStyle(
                         fontSize: 15,
+                        fontFamily: "CarterOne",
                         color: AppColors.orangePrimary,
                         fontWeight: FontWeight.w700,
                       ),
