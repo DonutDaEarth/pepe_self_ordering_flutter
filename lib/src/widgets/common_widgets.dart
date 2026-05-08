@@ -13,7 +13,12 @@ String formatPrice(int value) {
 }
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({required this.text, required this.onPressed, super.key, this.enabled = true});
+  const PrimaryButton({
+    required this.text,
+    required this.onPressed,
+    super.key,
+    this.enabled = true,
+  });
   final String text;
   final VoidCallback? onPressed;
   final bool enabled;
@@ -27,10 +32,17 @@ class PrimaryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.orangePrimary,
           foregroundColor: const Color(0xFFFEF4E0),
-          disabledBackgroundColor: AppColors.orangePrimary.withValues(alpha: 0.6),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          disabledBackgroundColor: AppColors.orangePrimary.withValues(
+            alpha: 0.6,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
-        child: Text(text, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18)),
+        child: Text(
+          text,
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+        ),
       ),
     );
   }
@@ -57,7 +69,12 @@ class LabeledTextField extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8, bottom: 2),
           child: Text(
             label,
-            style: const TextStyle(color: AppColors.orangePrimary, fontWeight: FontWeight.w700, fontSize: 15),
+            style: const TextStyle(
+              fontFamily: 'CarterOne',
+              color: AppColors.orangePrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 15,
+            ),
           ),
         ),
         Container(
@@ -69,11 +86,18 @@ class LabeledTextField extends StatelessWidget {
           child: TextField(
             controller: controller,
             obscureText: obscureText,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            style: const TextStyle(
+              fontFamily: 'CarterOne',
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
             decoration: InputDecoration(
               hintText: hint,
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
             ),
           ),
         ),
@@ -151,8 +175,22 @@ class AppHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(table, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700)),
-                      Text(outlet, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
+                      Text(
+                        table,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        outlet,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -169,7 +207,11 @@ class AppHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.search, size: 20, color: AppColors.brownDark),
+                  const Icon(
+                    Icons.search,
+                    size: 20,
+                    color: AppColors.brownDark,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
