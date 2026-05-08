@@ -32,18 +32,19 @@ class LoginResponse {
   final String token;
   final AuthUser? user;
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-        success: json['success'] ?? false,
-        message: json['message'] ?? '',
-        token: json['token'] ?? '',
-        user: json['user'] == null ? null : AuthUser.fromJson(json['user']),
-      );
+    success: json['success'] ?? false,
+    message: json['message'] ?? '',
+    token: json['token'] ?? '',
+    user: json['user'] == null ? null : AuthUser.fromJson(json['user']),
+  );
 }
 
 class MenuCategoryData {
   MenuCategoryData({required this.category, required this.menus});
   final String category;
   final List<MenuItemData> menus;
-  factory MenuCategoryData.fromJson(Map<String, dynamic> json) => MenuCategoryData(
+  factory MenuCategoryData.fromJson(Map<String, dynamic> json) =>
+      MenuCategoryData(
         category: json['category'] ?? '',
         menus: ((json['menus'] as List?) ?? [])
             .map((e) => MenuItemData.fromJson(e))
@@ -69,16 +70,16 @@ class MenuItemData {
   final String? pictureUrl;
   final List<SubitemData> subitems;
   factory MenuItemData.fromJson(Map<String, dynamic> json) => MenuItemData(
-        id: json['m_id'] ?? json['id'] ?? 0,
-        price: json['price'] ?? 0,
-        name: json['name'] ?? '',
-        desc: json['desc'] ?? '',
-        isSelling: json['is_selling'] ?? true,
-        pictureUrl: json['picture_url'],
-        subitems: ((json['subitems'] as List?) ?? [])
-            .map((e) => SubitemData.fromJson(e))
-            .toList(),
-      );
+    id: json['m_id'] ?? json['id'] ?? 0,
+    price: json['price'] ?? 0,
+    name: json['name'] ?? '',
+    desc: json['desc'] ?? '',
+    isSelling: json['is_selling'] ?? true,
+    pictureUrl: json['picture_url'],
+    subitems: ((json['subitems'] as List?) ?? [])
+        .map((e) => SubitemData.fromJson(e))
+        .toList(),
+  );
 }
 
 class SubitemData {
@@ -87,24 +88,28 @@ class SubitemData {
     required this.name,
     required this.price,
     required this.isSelling,
+    required this.category,
   });
   final int id;
   final String name;
   final int price;
   final bool isSelling;
+  final String category;
   factory SubitemData.fromJson(Map<String, dynamic> json) => SubitemData(
-        id: json['id'] ?? json['menu_id'] ?? 0,
-        name: json['name'] ?? '',
-        price: json['price'] ?? 0,
-        isSelling: json['is_selling'] ?? true,
-      );
+    id: json['id'] ?? json['menu_id'] ?? 0,
+    name: json['name'] ?? '',
+    price: json['price'] ?? 0,
+    isSelling: json['is_selling'] ?? true,
+    category: json['category'] ?? '',
+  );
 }
 
 class OutletMenusResponse {
   OutletMenusResponse({required this.success, required this.data});
   final bool success;
   final List<MenuCategoryData> data;
-  factory OutletMenusResponse.fromJson(Map<String, dynamic> json) => OutletMenusResponse(
+  factory OutletMenusResponse.fromJson(Map<String, dynamic> json) =>
+      OutletMenusResponse(
         success: json['success'] ?? false,
         data: ((json['data'] as List?) ?? [])
             .map((e) => MenuCategoryData.fromJson(e))
@@ -124,11 +129,11 @@ class CreateOrderRequest {
   final int userId;
   final List<OrderItemRequest> orderItems;
   Map<String, dynamic> toJson() => {
-        'outlet_id': outletId,
-        'table_no': tableNo,
-        'user_id': userId,
-        'order_item': orderItems.map((e) => e.toJson()).toList(),
-      };
+    'outlet_id': outletId,
+    'table_no': tableNo,
+    'user_id': userId,
+    'order_item': orderItems.map((e) => e.toJson()).toList(),
+  };
 }
 
 class OrderItemRequest {
@@ -141,10 +146,10 @@ class OrderItemRequest {
   final int quantity;
   final List<SubitemRequest> subitems;
   Map<String, dynamic> toJson() => {
-        'menu_id': menuId,
-        'quantity': quantity,
-        'subitems': subitems.map((e) => e.toJson()).toList(),
-      };
+    'menu_id': menuId,
+    'quantity': quantity,
+    'subitems': subitems.map((e) => e.toJson()).toList(),
+  };
 }
 
 class SubitemRequest {
@@ -155,11 +160,16 @@ class SubitemRequest {
 }
 
 class CreateOrderResponse {
-  CreateOrderResponse({required this.success, required this.message, required this.uid});
+  CreateOrderResponse({
+    required this.success,
+    required this.message,
+    required this.uid,
+  });
   final bool success;
   final String message;
   final String uid;
-  factory CreateOrderResponse.fromJson(Map<String, dynamic> json) => CreateOrderResponse(
+  factory CreateOrderResponse.fromJson(Map<String, dynamic> json) =>
+      CreateOrderResponse(
         success: json['success'] ?? false,
         message: json['message'] ?? '',
         uid: (json['data']?['uid'] ?? '').toString(),
@@ -170,9 +180,12 @@ class TrackOrderResponse {
   TrackOrderResponse({required this.success, required this.data});
   final bool success;
   final TrackOrderData? data;
-  factory TrackOrderResponse.fromJson(Map<String, dynamic> json) => TrackOrderResponse(
+  factory TrackOrderResponse.fromJson(Map<String, dynamic> json) =>
+      TrackOrderResponse(
         success: json['success'] ?? false,
-        data: json['data'] == null ? null : TrackOrderData.fromJson(json['data']),
+        data: json['data'] == null
+            ? null
+            : TrackOrderData.fromJson(json['data']),
       );
 }
 
@@ -188,9 +201,10 @@ class TrackOrderData {
   final int subtotal;
   final List<TrackOrderItem> items;
   factory TrackOrderData.fromJson(Map<String, dynamic> json) {
-    final parsedItems = (((json['or_order_item'] ?? {})['items'] as List?) ?? [])
-        .map((e) => TrackOrderItem.fromJson(e))
-        .toList();
+    final parsedItems =
+        (((json['or_order_item'] ?? {})['items'] as List?) ?? [])
+            .map((e) => TrackOrderItem.fromJson(e))
+            .toList();
     return TrackOrderData(
       tableNo: json['table_no'] ?? '',
       outletName: (json['outlet']?['name'] ?? '').toString(),
@@ -216,15 +230,15 @@ class TrackOrderItem {
   final String? pictureUrl;
   final List<String> subitems;
   factory TrackOrderItem.fromJson(Map<String, dynamic> json) => TrackOrderItem(
-        menuId: json['menu_id'] ?? 0,
-        quantity: json['quantity'] ?? 1,
-        total: json['total'] ?? 0,
-        name: json['name'] ?? '',
-        pictureUrl: json['picture_url'],
-        subitems: ((json['subitems'] as List?) ?? [])
-            .map((e) => (e['name'] ?? '').toString())
-            .toList(),
-      );
+    menuId: json['menu_id'] ?? 0,
+    quantity: json['quantity'] ?? 1,
+    total: json['total'] ?? 0,
+    name: json['name'] ?? '',
+    pictureUrl: json['picture_url'],
+    subitems: ((json['subitems'] as List?) ?? [])
+        .map((e) => (e['name'] ?? '').toString())
+        .toList(),
+  );
 }
 
 class ScannedQrData {
