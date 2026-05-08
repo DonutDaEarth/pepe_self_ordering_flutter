@@ -209,79 +209,92 @@ class _MenuDetailSheetState extends State<_MenuDetailSheet> {
         qty;
     return Container(
       color: AppColors.beigeLight,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              NetworkRoundedImage(url: widget.menu.pictureUrl, size: 180),
-              const SizedBox(height: 12),
-              Text(
-                widget.menu.name,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(widget.menu.desc),
-              const SizedBox(height: 12),
-              ...widget.menu.subitems.map(
-                (s) => RadioListTile<bool>(
-                  dense: true,
-                  value: true,
-                  groupValue: picked.containsKey(s.name),
-                  onChanged: (_) => setState(() => picked[s.name] = s),
-                  title: Text(s.name),
-                  subtitle: s.price == 0
-                      ? null
-                      : Text('+ Rp. ${formatPrice(s.price)}'),
-                ),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () =>
-                        setState(() => qty = qty > 1 ? qty - 1 : 1),
-                    icon: const Icon(Icons.remove),
-                  ),
-                  Text('$qty'),
-                  IconButton(
-                    onPressed: () => setState(() => qty++),
-                    icon: const Icon(Icons.add),
-                  ),
-                ],
-              ),
-              Text(
-                'Total Item Price: Rp. ${formatPrice(total)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.orangePrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              PrimaryButton(
-                text: 'Add To Cart',
-                onPressed: () {
-                  context.read<CartState>().add(
-                    CartLine(
-                      name: widget.menu.name,
-                      description: widget.menu.desc,
-                      basePrice: widget.menu.price,
-                      selectedSubitems: picked,
-                      quantity: qty,
-                      menuId: widget.menu.id,
-                      subitemIds: picked.values.map((e) => e.id).toList(),
-                      imageUrl: widget.menu.pictureUrl,
-                    ),
-                  );
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          NetworkRoundedImage(url: widget.menu.pictureUrl, size: 180),
+          const SizedBox(height: 12),
+          Text(
+            widget.menu.name,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
-        ),
+          Text(widget.menu.desc),
+          const SizedBox(height: 12),
+          ...widget.menu.subitems.map(
+            (s) => RadioListTile<bool>(
+              dense: true,
+              value: true,
+              groupValue: picked.containsKey(s.name),
+              onChanged: (_) => setState(() => picked[s.name] = s),
+              title: Text(s.name),
+              subtitle: s.price == 0
+                  ? null
+                  : Text('+ Rp. ${formatPrice(s.price)}'),
+            ),
+          ),
+          // Row(
+          //   children: [
+          //     IconButton(
+          //       onPressed: () => setState(() => qty = qty > 1 ? qty - 1 : 1),
+          //       icon: const Icon(Icons.remove),
+          //     ),
+          //     Text('$qty'),
+          //     IconButton(
+          //       onPressed: () => setState(() => qty++),
+          //       icon: const Icon(Icons.add),
+          //     ),
+          //   ],
+          // ),
+          Container(
+            color: AppColors.creamBackground,
+            padding: EdgeInsetsGeometry.fromLTRB(19, 9, 19, 23),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Total Item Price:',
+                      style: const TextStyle(
+                        fontFamily: "CarterOne",
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.orangePrimary,
+                      ),
+                    ),
+                    Expanded(child: SizedBox()),
+                    Text(
+                      'Rp. ${formatPrice(total)}',
+                      style: const TextStyle(
+                        fontFamily: "CarterOne",
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.orangePrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                PrimaryButton(
+                  text: 'Add To Cart',
+                  onPressed: () {
+                    context.read<CartState>().add(
+                      CartLine(
+                        name: widget.menu.name,
+                        description: widget.menu.desc,
+                        basePrice: widget.menu.price,
+                        selectedSubitems: picked,
+                        quantity: qty,
+                        menuId: widget.menu.id,
+                        subitemIds: picked.values.map((e) => e.id).toList(),
+                        imageUrl: widget.menu.pictureUrl,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
