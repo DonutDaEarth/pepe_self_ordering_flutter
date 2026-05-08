@@ -48,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 24),
+        padding: const EdgeInsets.only(bottom: 24, top: 50),
         child: Column(
           children: [
             Container(
@@ -65,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 26),
               child: Column(
                 children: [
-                  const SizedBox(height: 24),
+                  // const SizedBox(height: 24),
                   LabeledTextField(label: 'Name', controller: name),
                   const SizedBox(height: 24),
                   LabeledTextField(label: 'E-mail', controller: email),
