@@ -155,6 +155,7 @@ class _MenuCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
+                        fontFamily: "CarterOne",
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                       ),
