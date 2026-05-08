@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:pepe_self_ordering_flutter/src/data/models/models.dart';
 import 'package:pepe_self_ordering_flutter/src/state/app_state.dart';
 import 'package:pepe_self_ordering_flutter/src/state/cart_state.dart';
 import 'package:pepe_self_ordering_flutter/src/theme/app_theme.dart';
@@ -14,8 +15,10 @@ class QrScannerScreen extends StatefulWidget {
 
 class _QrScannerScreenState extends State<QrScannerScreen> {
   bool handled = false;
+  ScannedQrData? scanned;
   @override
   Widget build(BuildContext context) {
+    final app = context.watch<AppState>();
     return Scaffold(
       backgroundColor: const Color(0xFF2C2C2C),
       body: Stack(
@@ -27,10 +30,13 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               if (value == null) return;
               final parsed = AppState.parseQr(value);
               if (parsed == null) return;
-              handled = true;
+              setState(() {
+                handled = true;
+                scanned = parsed;
+              });
               context.read<AppState>().setOutlet(parsed);
               context.read<CartState>().clear();
-              context.go('/main_menu');
+              // context.go('/main_menu');
             },
           ),
           Align(
@@ -59,21 +65,61 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 260,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.orangePrimary,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Text(
-                      "Scan your Table's QR Code",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: AppColors.brownDark,
-                        fontWeight: FontWeight.w700,
+                  InkWell(
+                    onTap: scanned == null
+                        ? null
+                        : () => context.go('/main_menu'),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      width: 260,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.orangePrimary,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 4,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
+                      child: scanned == null
+                          ? const Text(
+                              "Scan your Table's QR Code",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: "CarterOne",
+                                fontSize: 18,
+                                color: AppColors.brownDark,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  app.outletName,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontFamily: "CarterOne",
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  app.tableNumber,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontFamily: "CarterOne",
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                   const SizedBox(height: 12),
