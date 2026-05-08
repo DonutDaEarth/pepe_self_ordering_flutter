@@ -5,7 +5,9 @@ import 'package:pepe_self_ordering_flutter/src/data/models/models.dart';
 import 'package:pepe_self_ordering_flutter/src/state/app_state.dart';
 import 'package:pepe_self_ordering_flutter/src/state/cart_state.dart';
 import 'package:pepe_self_ordering_flutter/src/theme/app_theme.dart';
-import 'package:pepe_self_ordering_flutter/src/widgets/common_widgets.dart';
+import 'package:pepe_self_ordering_flutter/src/widgets/format_price.dart';
+import 'package:pepe_self_ordering_flutter/src/widgets/network_rounded_image.dart';
+import 'package:pepe_self_ordering_flutter/src/widgets/primary_button.dart';
 
 class ReceiptScreen extends StatefulWidget {
   const ReceiptScreen({super.key});

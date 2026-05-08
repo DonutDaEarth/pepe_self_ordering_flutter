@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:pepe_self_ordering_flutter/src/state/app_state.dart';
 import 'package:pepe_self_ordering_flutter/src/theme/app_theme.dart';
-import 'package:pepe_self_ordering_flutter/src/widgets/common_widgets.dart';
+import 'package:pepe_self_ordering_flutter/src/widgets/labeled_text_field.dart';
+import 'package:pepe_self_ordering_flutter/src/widgets/primary_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
