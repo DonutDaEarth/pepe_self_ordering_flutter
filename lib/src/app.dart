@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:pepe_self_ordering_flutter/src/navigation/app_router.dart';
 import 'package:pepe_self_ordering_flutter/src/state/app_state.dart';
@@ -12,6 +13,7 @@ class PepeApp extends StatefulWidget {
 }
 
 class _PepeAppState extends State<PepeApp> {
+  GoRouter? _router;
   @override
   void initState() {
     super.initState();
@@ -27,14 +29,17 @@ class _PepeAppState extends State<PepeApp> {
       return MaterialApp(
         theme: buildAppTheme(),
         home: const Scaffold(
-          body: Center(child: CircularProgressIndicator(color: AppColors.orangePrimary)),
+          body: Center(
+            child: CircularProgressIndicator(color: AppColors.orangePrimary),
+          ),
         ),
       );
     }
+    _router ??= buildRouter(appState);
     return MaterialApp.router(
       title: 'Pepe Self Ordering',
       theme: buildAppTheme(),
-      routerConfig: buildRouter(appState),
+      routerConfig: _router!,
       debugShowCheckedModeBanner: false,
     );
   }
