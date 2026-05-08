@@ -45,57 +45,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 24),
+        padding: const EdgeInsets.only(bottom: 24, top: 54),
         child: Column(
           children: [
-            Container(
-              height: 246,
-              width: double.infinity,
-              // color: AppColors.,
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/images/pepe_app_logo.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 26),
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-                  LabeledTextField(label: 'Name', controller: name),
-                  const SizedBox(height: 24),
-                  LabeledTextField(label: 'E-mail', controller: email),
-                  const SizedBox(height: 24),
-                  LabeledTextField(
-                    label: 'Password',
-                    controller: pass,
-                    obscureText: true,
+            Stack(
+              children: [
+                Container(
+                  height: 246,
+                  width: double.infinity,
+                  // color: AppColors.,
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/images/pepe_app_logo.png',
+                    fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 24),
-                  LabeledTextField(
-                    label: 'Confirmed Password',
-                    controller: confirm,
-                    obscureText: true,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 26),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 200),
+                      LabeledTextField(label: 'Name', controller: name),
+                      const SizedBox(height: 24),
+                      LabeledTextField(label: 'E-mail', controller: email),
+                      const SizedBox(height: 24),
+                      LabeledTextField(
+                        label: 'Password',
+                        controller: pass,
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 24),
+                      LabeledTextField(
+                        label: 'Confirmed Password',
+                        controller: confirm,
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 16),
+                      if (error != null)
+                        Text(error!, style: const TextStyle(color: Colors.red)),
+                      const SizedBox(height: 40),
+                      TextButton(
+                        onPressed: () => context.push('/login'),
+                        child: const Text(
+                          'Already have an account?',
+                          style: TextStyle(color: AppColors.orangePrimary),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      PrimaryButton(
+                        text: loading ? 'Loading...' : 'Register',
+                        onPressed: loading ? null : submit,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  if (error != null)
-                    Text(error!, style: const TextStyle(color: Colors.red)),
-                  const SizedBox(height: 40),
-                  TextButton(
-                    onPressed: () => context.push('/login'),
-                    child: const Text(
-                      'Already have an account?',
-                      style: TextStyle(color: AppColors.orangePrimary),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  PrimaryButton(
-                    text: loading ? 'Loading...' : 'Register',
-                    onPressed: loading ? null : submit,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
