@@ -1,5 +1,11 @@
 import 'package:go_router/go_router.dart';
-import 'package:pepe_self_ordering_flutter/src/screens/screens.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/cart_screen.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/login_screen.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/main_menu_screen.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/payment_success_screen.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/qr_scanner_screen.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/receipt_screen.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/register_screen.dart';
 import 'package:pepe_self_ordering_flutter/src/state/app_state.dart';
 
 GoRouter buildRouter(AppState appState) {
