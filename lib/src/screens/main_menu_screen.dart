@@ -204,6 +204,16 @@ class _MenuDetailSheetState extends State<_MenuDetailSheet> {
   int qty = 1;
   @override
   Widget build(BuildContext context) {
+    final grouped = <String, List<SubitemData>>{};
+    for (final item in widget.menu.subitems) {
+      final category = item.category.trim().isEmpty
+          ? 'Options'
+          : item.category.trim();
+      grouped.putIfAbsent(category, () => []).add(item);
+    }
+    final hasRequiredSelections =
+        grouped.isEmpty ||
+        grouped.keys.every((category) => picked[category] != null);
     final total =
         (widget.menu.price +
             picked.values.fold<int>(0, (p, e) => p + e.price.toInt())) *
@@ -227,34 +237,95 @@ class _MenuDetailSheetState extends State<_MenuDetailSheet> {
                         size: 180,
                         detailMode: true,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 24),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 19),
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.menu.name,
-                              style: const TextStyle(
-                                fontFamily: "CarterOne",
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                              ),
+                              child: Text(
+                                widget.menu.name,
+                                style: const TextStyle(
+                                  fontFamily: "CarterOne",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
-                            Text(widget.menu.desc),
-                            const SizedBox(height: 12),
-                            ...widget.menu.subitems.map(
-                              (s) => RadioListTile<bool>(
-                                dense: true,
-                                value: true,
-                                groupValue: picked.containsKey(s.name),
-                                onChanged: (_) =>
-                                    setState(() => picked[s.name] = s),
-                                title: Text(s.name),
-                                subtitle: s.price == 0
-                                    ? null
-                                    : Text('+ Rp. ${formatPrice(s.price)}'),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
                               ),
+                              child: Text(widget.menu.desc),
+                            ),
+                            const SizedBox(height: 12),
+                            ...grouped.entries.expand(
+                              (entry) => [
+                                const Divider(
+                                  color: AppColors.orangeDivider,
+                                  thickness: 2,
+                                ),
+                                const SizedBox(height: 4),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                  ),
+                                  child: Text(
+                                    entry.key,
+                                    style: const TextStyle(
+                                      fontFamily: "Actor",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                ...entry.value.map(
+                                  (s) => InkWell(
+                                    onTap: () =>
+                                        setState(() => picked[entry.key] = s),
+                                    child: Row(
+                                      children: [
+                                        Radio<int>(
+                                          value: s.id,
+                                          groupValue: picked[entry.key]?.id,
+                                          onChanged: (_) => setState(
+                                            () => picked[entry.key] = s,
+                                          ),
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          visualDensity: VisualDensity.compact,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          s.name,
+                                          style: TextStyle(
+                                            fontFamily: "CarterOne",
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        if (s.price != 0)
+                                          Text(
+                                            '+ Rp. ${formatPrice(s.price)}',
+                                            style: TextStyle(
+                                              fontFamily: "CarterOne",
+                                              color: AppColors.orangePrimary
+                                                  .withOpacity(0.75),
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
                             ),
                             const SizedBox(height: 12),
                           ],
@@ -293,21 +364,26 @@ class _MenuDetailSheetState extends State<_MenuDetailSheet> {
                     const SizedBox(height: 12),
                     PrimaryButton(
                       text: 'Add To Cart',
-                      onPressed: () {
-                        context.read<CartState>().add(
-                          CartLine(
-                            name: widget.menu.name,
-                            description: widget.menu.desc,
-                            basePrice: widget.menu.price,
-                            selectedSubitems: picked,
-                            quantity: qty,
-                            menuId: widget.menu.id,
-                            subitemIds: picked.values.map((e) => e.id).toList(),
-                            imageUrl: widget.menu.pictureUrl,
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
+                      enabled: hasRequiredSelections,
+                      onPressed: hasRequiredSelections
+                          ? () {
+                              context.read<CartState>().add(
+                                CartLine(
+                                  name: widget.menu.name,
+                                  description: widget.menu.desc,
+                                  basePrice: widget.menu.price,
+                                  selectedSubitems: picked,
+                                  quantity: qty,
+                                  menuId: widget.menu.id,
+                                  subitemIds: picked.values
+                                      .map((e) => e.id)
+                                      .toList(),
+                                  imageUrl: widget.menu.pictureUrl,
+                                ),
+                              );
+                              Navigator.pop(context);
+                            }
+                          : null,
                     ),
                   ],
                 ),
