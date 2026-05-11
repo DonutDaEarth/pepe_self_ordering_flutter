@@ -130,7 +130,14 @@ class CartScreen extends StatelessWidget {
                                         item.quantity - 1,
                                       ),
                                     ),
-                                    Text('${item.quantity}'),
+                                    Text(
+                                      '${item.quantity}',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontFamily: "CarterOne",
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
 
                                     TextButton(
                                       child: Container(
@@ -197,6 +204,7 @@ class CartScreen extends StatelessWidget {
                 const Spacer(),
                 PrimaryButton(
                   text: 'Proceed to Payment',
+                  enabled: cart.items.isNotEmpty,
                   onPressed: () async {
                     final req = CreateOrderRequest(
                       outletId: int.tryParse(app.outletId ?? '') ?? 1,
