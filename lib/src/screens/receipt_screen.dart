@@ -8,6 +8,7 @@ import 'package:pepe_self_ordering_flutter/src/theme/app_theme.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/format_price.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/network_rounded_image.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/primary_button.dart';
+import 'package:pepe_self_ordering_flutter/src/widgets/summary_row.dart';
 
 class ReceiptScreen extends StatefulWidget {
   const ReceiptScreen({super.key});
@@ -132,11 +133,11 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
             ),
             child: Column(
               children: [
-                _SummaryRow('Subtotal', subtotal),
-                _SummaryRow('Service Charge (10%)', service),
-                _SummaryRow('Tax (10%)', tax),
+                SummaryRow('Subtotal', subtotal),
+                SummaryRow('Service Charge (10%)', service),
+                SummaryRow('Tax (10%)', tax),
                 const Divider(color: AppColors.orangeDark, thickness: 2),
-                _SummaryRow('Grand Total', grand, bold: true),
+                SummaryRow('Grand Total', grand, bold: true),
                 const Spacer(),
                 PrimaryButton(
                   text: 'Make Another Order',
@@ -151,30 +152,6 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SummaryRow extends StatelessWidget {
-  const _SummaryRow(this.label, this.amount, {this.bold = false});
-  final String label;
-  final int amount;
-  final bool bold;
-  @override
-  Widget build(BuildContext context) {
-    final style = TextStyle(
-      fontSize: bold ? 18 : 16,
-      fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
-    );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: style),
-          Text('Rp. ${formatPrice(amount)}', style: style),
         ],
       ),
     );
