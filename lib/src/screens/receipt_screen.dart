@@ -59,7 +59,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 40),
+          const SizedBox(height: 45),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 23),
             child: Row(
@@ -68,6 +68,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
                 Text(
                   receipt!.tableNo,
                   style: const TextStyle(
+                    fontFamily: "CarterOne",
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
@@ -75,6 +76,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
                 Text(
                   receipt!.outletName,
                   style: const TextStyle(
+                    fontFamily: "CarterOne",
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
@@ -101,17 +103,23 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
                           Text(
                             '${item.quantity > 1 ? '${item.quantity}x ' : ''}${item.name}',
                             style: const TextStyle(
+                              fontFamily: "CarterOne",
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           Text(
                             item.subitems.join(', '),
-                            style: const TextStyle(fontSize: 11),
+                            style: const TextStyle(
+                              fontFamily: "Actor",
+                              fontSize: 12,
+                            ),
                           ),
                           Text(
                             'Rp. ${formatPrice(item.total)}',
                             style: const TextStyle(
+                              fontFamily: "CarterOne",
+
                               color: AppColors.orangePrimary,
                               fontWeight: FontWeight.w700,
                             ),
