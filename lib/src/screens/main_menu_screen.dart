@@ -181,6 +181,7 @@ class _MenuCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                    SizedBox(height: 10),
                   ],
                 ),
               ),
