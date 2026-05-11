@@ -64,38 +64,110 @@ class CartScreen extends StatelessWidget {
                               ),
                             ),
                             const Spacer(),
-                            Column(
+                            Row(
                               children: [
-                                Text(
-                                  'Rp. ${formatPrice(item.totalPrice())}',
-                                  style: const TextStyle(
-                                    fontFamily: "CarterOne",
-                                    fontSize: 15,
-                                    color: AppColors.orangePrimary,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      'Rp. ${formatPrice(item.totalPrice())}',
+                                      style: const TextStyle(
+                                        fontFamily: "CarterOne",
+                                        fontSize: 15,
+                                        color: AppColors.orangePrimary,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                  ],
                                 ),
-                                SizedBox(height: 10),
+                                Spacer(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                      child: Container(
+                                        height: 27,
+                                        width: 27,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.greenButton,
+                                          borderRadius: BorderRadius.circular(
+                                            9,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(
+                                                alpha: 0.25,
+                                              ),
+                                              blurRadius: 4,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: item.quantity == 1
+                                              ? Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red[600],
+                                                  size: 16,
+                                                )
+                                              : Text(
+                                                  "-",
+                                                  style: TextStyle(
+                                                    fontFamily: "CarterOne",
+                                                    color: AppColors.brownDark,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      onPressed: () => cart.updateQuantity(
+                                        i,
+                                        item.quantity - 1,
+                                      ),
+                                    ),
+                                    Text('${item.quantity}'),
+
+                                    TextButton(
+                                      child: Container(
+                                        height: 27,
+                                        width: 27,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.greenButton,
+                                          borderRadius: BorderRadius.circular(
+                                            9,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(
+                                                alpha: 0.25,
+                                              ),
+                                              blurRadius: 4,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "+",
+                                            style: TextStyle(
+                                              fontFamily: "CarterOne",
+                                              color: AppColors.brownDark,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () => cart.updateQuantity(
+                                        i,
+                                        item.quantity + 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ],
                         ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () =>
-                                cart.updateQuantity(i, item.quantity + 1),
-                            icon: const Icon(Icons.add),
-                          ),
-                          Text('${item.quantity}'),
-                          IconButton(
-                            onPressed: () =>
-                                cart.updateQuantity(i, item.quantity - 1),
-                            icon: const Icon(Icons.remove),
-                          ),
-                        ],
                       ),
                     ],
                   ),
