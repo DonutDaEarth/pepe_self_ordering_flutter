@@ -107,7 +107,12 @@ class CartScreen extends StatelessWidget {
                                           child: item.quantity == 1
                                               ? Icon(
                                                   Icons.delete,
-                                                  color: Colors.red[600],
+                                                  color: const Color.fromARGB(
+                                                    255,
+                                                    149,
+                                                    14,
+                                                    12,
+                                                  ),
                                                   size: 16,
                                                 )
                                               : Text(
