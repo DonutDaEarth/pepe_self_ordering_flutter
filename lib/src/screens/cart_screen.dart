@@ -10,8 +10,15 @@ import 'package:pepe_self_ordering_flutter/src/widgets/format_price.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/network_rounded_image.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/primary_button.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  bool isPlacingOrder = false;
+
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
@@ -204,30 +211,52 @@ class CartScreen extends StatelessWidget {
                 const Spacer(),
                 PrimaryButton(
                   text: 'Proceed to Payment',
-                  enabled: cart.items.isNotEmpty,
-                  onPressed: () async {
-                    final req = CreateOrderRequest(
-                      outletId: int.tryParse(app.outletId ?? '') ?? 1,
-                      tableNo: app.tableNumber,
-                      userId: app.userId ?? 1,
-                      orderItems: cart.items
-                          .map(
-                            (e) => OrderItemRequest(
-                              menuId: e.menuId,
-                              quantity: e.quantity,
-                              subitems: e.subitemIds
-                                  .map((id) => SubitemRequest(menuId: id))
-                                  .toList(),
+                  enabled: cart.items.isNotEmpty && !isPlacingOrder,
+                  child: isPlacingOrder
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(
+                              Color(0xFFFEF4E0),
                             ),
-                          )
-                          .toList(),
-                    );
-                    final res = await app.orderRepo.createOrder(req);
-                    await app.storage.saveLastOrderUid(res.uid);
-                    app.currentOrderUid = res.uid;
-                    if (!context.mounted) return;
-                    context.go('/payment_success');
-                  },
+                          ),
+                        )
+                      : null,
+                  onPressed: isPlacingOrder
+                      ? null
+                      : () async {
+                          setState(() => isPlacingOrder = true);
+                          try {
+                            final req = CreateOrderRequest(
+                              outletId: int.tryParse(app.outletId ?? '') ?? 1,
+                              tableNo: app.tableNumber,
+                              userId: app.userId ?? 1,
+                              orderItems: cart.items
+                                  .map(
+                                    (e) => OrderItemRequest(
+                                      menuId: e.menuId,
+                                      quantity: e.quantity,
+                                      subitems: e.subitemIds
+                                          .map(
+                                            (id) => SubitemRequest(menuId: id),
+                                          )
+                                          .toList(),
+                                    ),
+                                  )
+                                  .toList(),
+                            );
+                            final res = await app.orderRepo.createOrder(req);
+                            await app.storage.saveLastOrderUid(res.uid);
+                            app.currentOrderUid = res.uid;
+                            if (!context.mounted) return;
+                            context.go('/payment_success');
+                          } finally {
+                            if (!mounted) return;
+                            setState(() => isPlacingOrder = false);
+                          }
+                        },
                 ),
               ],
             ),
