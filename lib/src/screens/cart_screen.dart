@@ -49,6 +49,7 @@ class CartScreen extends StatelessWidget {
                             Text(
                               item.name,
                               style: const TextStyle(
+                                fontFamily: "CarterOne",
                                 fontSize: 17,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -57,16 +58,25 @@ class CartScreen extends StatelessWidget {
                               item.subitemsDisplay(),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 11),
+                              style: const TextStyle(
+                                fontFamily: "Actor",
+                                fontSize: 11,
+                              ),
                             ),
                             const Spacer(),
-                            Text(
-                              'Rp. ${formatPrice(item.totalPrice())}',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: AppColors.orangePrimary,
-                                fontWeight: FontWeight.w700,
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  'Rp. ${formatPrice(item.totalPrice())}',
+                                  style: const TextStyle(
+                                    fontFamily: "CarterOne",
+                                    fontSize: 15,
+                                    color: AppColors.orangePrimary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                              ],
                             ),
                           ],
                         ),
