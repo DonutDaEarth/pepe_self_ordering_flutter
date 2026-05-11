@@ -7,10 +7,12 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     super.key,
     this.enabled = true,
+    this.child,
   });
   final String text;
   final VoidCallback? onPressed;
   final bool enabled;
+  final Widget? child;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -43,10 +45,15 @@ class PrimaryButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: Text(
-              text,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
-            ),
+            child:
+                child ??
+                Text(
+                  text,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
           ),
         ),
       ),
