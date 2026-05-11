@@ -150,17 +150,28 @@ class _SummaryRow extends StatelessWidget {
   final bool bold;
   @override
   Widget build(BuildContext context) {
-    final style = TextStyle(
-      fontSize: bold ? 18 : 16,
-      fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
-    );
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: style),
-          Text('Rp. ${formatPrice(amount)}', style: style),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: "CarterOne",
+              fontSize: bold ? 18 : 16,
+              fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
+          Text(
+            'Rp. ${formatPrice(amount)}',
+            style: TextStyle(
+              fontFamily: "CarterOne",
+              fontSize: bold ? 18 : 16,
+              fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+              color: AppColors.orangePrimary,
+            ),
+          ),
         ],
       ),
     );
