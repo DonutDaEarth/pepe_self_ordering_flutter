@@ -19,6 +19,8 @@ class AuthRepository {
         return login(email, password);
       }
       return regRes.data['message']?.toString() ?? 'Registration failed';
+    } on DioException catch (e) {
+      return _extractErrorMessage(e) ?? 'Network error occurred';
     } catch (_) {
       return 'Network error occurred';
     }
@@ -38,6 +40,8 @@ class AuthRepository {
         email: email,
       );
       return null;
+    } on DioException catch (e) {
+      return _extractErrorMessage(e) ?? 'Network error occurred';
     } catch (_) {
       return 'Network error occurred';
     }
@@ -55,6 +59,28 @@ class AuthRepository {
       return 0;
     }
   }
+
+  String? _extractErrorMessage(DioException e) {
+    final status = e.response?.statusCode ?? 0;
+    final data = e.response?.data;
+    if (data is Map<String, dynamic>) {
+      final message = data['message']?.toString();
+      if (message != null && message.trim().isNotEmpty) return message;
+      final summary = data['summary']?.toString();
+      if (summary != null && summary.trim().isNotEmpty) return summary;
+      final errors = data['errors'];
+      if (errors is List && errors.isNotEmpty) {
+        final first = errors.first;
+        if (first is Map<String, dynamic>) {
+          final errorMsg =
+              first['summary']?.toString() ?? first['message']?.toString();
+          if (errorMsg != null && errorMsg.trim().isNotEmpty) return errorMsg;
+        }
+      }
+    }
+    if (status >= 400 && status < 500) return 'Request failed ($status)';
+    return null;
+  }
 }
 
 class MenuRepository {
@@ -71,27 +97,32 @@ class MenuRepository {
     );
     final parsed = OutletMenusResponse.fromJson(res.data);
     return parsed.data
-        .map((c) => MenuCategoryData(
-              category: c.category,
-              menus: c.menus
-                  .where((m) => m.isSelling)
-                  .map(
-                    (m) => MenuItemData(
-                      id: m.id,
-                      price: m.price,
-                      name: m.name,
-                      desc: m.desc,
-                      isSelling: m.isSelling,
-                      pictureUrl: m.pictureUrl,
-                      subitems: m.subitems.where((s) => s.isSelling).toList(),
-                    ),
-                  )
-                  .toList(),
-            ))
+        .map(
+          (c) => MenuCategoryData(
+            category: c.category,
+            menus: c.menus
+                .where((m) => m.isSelling)
+                .map(
+                  (m) => MenuItemData(
+                    id: m.id,
+                    price: m.price,
+                    name: m.name,
+                    desc: m.desc,
+                    isSelling: m.isSelling,
+                    pictureUrl: m.pictureUrl,
+                    subitems: m.subitems.where((s) => s.isSelling).toList(),
+                  ),
+                )
+                .toList(),
+          ),
+        )
         .toList();
   }
 
-  Future<List<MenuCategoryData>> searchMenus(String outletId, String keyword) async {
+  Future<List<MenuCategoryData>> searchMenus(
+    String outletId,
+    String keyword,
+  ) async {
     final token = await _storage.getToken();
     if (token == null) throw Exception('No authentication token found');
     final res = await _dio.get(
