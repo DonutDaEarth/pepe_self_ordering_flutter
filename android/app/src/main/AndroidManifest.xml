@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="pepe_self_ordering_flutter"
+        android:label="Pepe Self Ordering App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
