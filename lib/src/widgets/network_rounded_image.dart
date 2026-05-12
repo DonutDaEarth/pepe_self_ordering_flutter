@@ -23,6 +23,16 @@ class NetworkRoundedImage extends StatelessWidget {
           color: AppColors.greenMuted,
           borderRadius: radius,
         ),
+        child: const Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ),
+        ),
       );
       final image = url == null || url!.isEmpty
           ? placeholder
@@ -66,7 +76,21 @@ class NetworkRoundedImage extends StatelessWidget {
         height: size,
         fit: BoxFit.cover,
         imageUrl: url!,
-        placeholder: (_, __) => Container(color: AppColors.greenMuted),
+        placeholder: (_, __) => Container(
+          color: AppColors.greenMuted,
+          child: const Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.orangePrimary,
+                ),
+              ),
+            ),
+          ),
+        ),
         errorWidget: (_, __, ___) => Container(color: AppColors.greenMuted),
       ),
     );
