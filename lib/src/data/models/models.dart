@@ -212,6 +212,18 @@ class TrackOrderData {
       items: parsedItems,
     );
   }
+
+  factory TrackOrderData.fromLocalJson(Map<String, dynamic> json) {
+    final parsedItems = ((json['items'] as List?) ?? [])
+        .map((e) => TrackOrderItem.fromLocalJson(e))
+        .toList();
+    return TrackOrderData(
+      tableNo: (json['table_no'] ?? '').toString(),
+      outletName: (json['outlet_name'] ?? '').toString(),
+      subtotal: json['subtotal'] ?? 0,
+      items: parsedItems,
+    );
+  }
 }
 
 class TrackOrderItem {
@@ -239,6 +251,18 @@ class TrackOrderItem {
         .map((e) => (e['name'] ?? '').toString())
         .toList(),
   );
+
+  factory TrackOrderItem.fromLocalJson(Map<String, dynamic> json) =>
+      TrackOrderItem(
+        menuId: json['menu_id'] ?? 0,
+        quantity: json['quantity'] ?? 1,
+        total: json['total'] ?? 0,
+        name: json['name'] ?? '',
+        pictureUrl: json['picture_url'],
+        subitems: ((json['subitems'] as List?) ?? [])
+            .map((e) => e.toString())
+            .toList(),
+      );
 }
 
 class ScannedQrData {

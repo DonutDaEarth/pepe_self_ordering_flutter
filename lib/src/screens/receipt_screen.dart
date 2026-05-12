@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +30,8 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
 
   Future<void> load() async {
     final app = context.read<AppState>();
-    if (app.currentOrderUid == null) {
+    final receiptJson = await app.storage.getLastReceiptJson();
+    if (receiptJson == null) {
       setState(() {
         loading = false;
         error = 'Failed to load receipt';
@@ -36,7 +39,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
       return;
     }
     try {
-      receipt = await app.orderRepo.trackOrder(app.currentOrderUid!);
+      receipt = TrackOrderData.fromLocalJson(jsonDecode(receiptJson));
     } catch (e) {
       error = e.toString();
     }
@@ -150,6 +153,10 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
                 PrimaryButton(
                   text: 'Make Another Order',
                   onPressed: () async {
+                    await context
+                        .read<AppState>()
+                        .storage
+                        .clearLastReceiptJson();
                     await context.read<AppState>().storage.clearLastOrderUid();
                     context.read<AppState>().currentOrderUid = null;
                     cart.clear();

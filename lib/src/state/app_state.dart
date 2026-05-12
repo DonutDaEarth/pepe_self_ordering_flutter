@@ -24,10 +24,13 @@ class AppState extends ChangeNotifier {
     if (!isBootLoading) return;
     final token = await storage.getToken();
     currentOrderUid = await storage.getLastOrderUid();
+    final lastReceiptJson = await storage.getLastReceiptJson();
     userId = await storage.getUserId();
     startRoute = token == null
         ? '/register'
-        : (currentOrderUid != null ? '/receipt' : '/qr_scanner');
+        : ((currentOrderUid != null || lastReceiptJson != null)
+              ? '/receipt'
+              : '/qr_scanner');
     isBootLoading = false;
     notifyListeners();
   }

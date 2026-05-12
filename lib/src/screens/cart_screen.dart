@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -385,27 +387,28 @@ class _CartScreenState extends State<CartScreen> {
                       : () async {
                           setState(() => isPlacingOrder = true);
                           try {
-                            final req = CreateOrderRequest(
-                              outletId: int.tryParse(app.outletId ?? '') ?? 1,
-                              tableNo: app.tableNumber,
-                              userId: app.userId ?? 1,
-                              orderItems: cart.items
+                            final receiptJson = {
+                              'table_no': app.tableNumber,
+                              'outlet_name': app.outletName,
+                              'subtotal': subtotal,
+                              'items': cart.items
                                   .map(
-                                    (e) => OrderItemRequest(
-                                      menuId: e.menuId,
-                                      quantity: e.quantity,
-                                      subitems: e.subitemIds
-                                          .map(
-                                            (id) => SubitemRequest(menuId: id),
-                                          )
+                                    (e) => {
+                                      'menu_id': e.menuId,
+                                      'quantity': e.quantity,
+                                      'total': e.totalPrice(),
+                                      'name': e.name,
+                                      'picture_url': e.imageUrl,
+                                      'subitems': e.selectedSubitems.values
+                                          .map((s) => s.name)
                                           .toList(),
-                                    ),
+                                    },
                                   )
                                   .toList(),
+                            };
+                            await app.storage.saveLastReceiptJson(
+                              jsonEncode(receiptJson),
                             );
-                            final res = await app.orderRepo.createOrder(req);
-                            await app.storage.saveLastOrderUid(res.uid);
-                            app.currentOrderUid = res.uid;
                             if (!context.mounted) return;
                             context.go('/payment_success');
                           } finally {

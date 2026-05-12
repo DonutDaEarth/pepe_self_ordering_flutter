@@ -5,6 +5,7 @@ class AuthStorage {
   static const _userIdKey = 'user_id';
   static const _userEmailKey = 'user_email';
   static const _lastOrderUidKey = 'last_order_uid';
+  static const _lastReceiptKey = 'last_receipt_json';
 
   Future<SharedPreferences> get _prefs async => SharedPreferences.getInstance();
 
@@ -12,6 +13,8 @@ class AuthStorage {
   Future<int?> getUserId() async => (await _prefs).getInt(_userIdKey);
   Future<String?> getLastOrderUid() async =>
       (await _prefs).getString(_lastOrderUidKey);
+  Future<String?> getLastReceiptJson() async =>
+      (await _prefs).getString(_lastReceiptKey);
 
   Future<void> saveAuth({
     required String token,
@@ -26,8 +29,13 @@ class AuthStorage {
 
   Future<void> saveLastOrderUid(String uid) async =>
       (await _prefs).setString(_lastOrderUidKey, uid);
+  Future<void> saveLastReceiptJson(String json) async =>
+      (await _prefs).setString(_lastReceiptKey, json);
 
-  Future<void> clearLastOrderUid() async => (await _prefs).remove(_lastOrderUidKey);
+  Future<void> clearLastOrderUid() async =>
+      (await _prefs).remove(_lastOrderUidKey);
+  Future<void> clearLastReceiptJson() async =>
+      (await _prefs).remove(_lastReceiptKey);
 
   Future<void> clearAuthData() async => (await _prefs).clear();
 }
