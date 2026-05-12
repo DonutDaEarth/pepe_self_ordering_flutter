@@ -57,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       'Login to an existing account',
                       textAlign: TextAlign.center,
                       style: TextStyle(
+                        fontFamily: "CarterOne",
                         fontSize: 26,
                         color: AppColors.orangePrimary,
                         fontWeight: FontWeight.w700,
