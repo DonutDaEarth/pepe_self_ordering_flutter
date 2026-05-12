@@ -91,7 +91,7 @@ class _CartScreenState extends State<CartScreen> {
                                   style: TextStyle(
                                     fontFamily: "CarterOne",
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 25,
+                                    fontSize: 20,
                                     color: AppColors.brownDark,
                                   ),
                                 ),
@@ -99,6 +99,12 @@ class _CartScreenState extends State<CartScreen> {
                                 Row(
                                   children: [
                                     TextButton(
+                                      style: TextButton.styleFrom(
+                                        minimumSize: const Size(36, 36),
+                                        padding: EdgeInsets.zero,
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
                                       child: Container(
                                         height: 36,
                                         width: 36,
@@ -149,6 +155,7 @@ class _CartScreenState extends State<CartScreen> {
                                         setQuantity(nextQty);
                                       },
                                     ),
+                                    SizedBox(width: 6),
                                     Text(
                                       '$quantity',
                                       style: const TextStyle(
@@ -157,7 +164,14 @@ class _CartScreenState extends State<CartScreen> {
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),
+                                    SizedBox(width: 6),
                                     TextButton(
+                                      style: TextButton.styleFrom(
+                                        minimumSize: const Size(36, 36),
+                                        padding: EdgeInsets.zero,
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
                                       child: Container(
                                         height: 36,
                                         width: 36,
@@ -188,7 +202,9 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       onPressed: () {
-                                        final nextQty = quantity + 1;
+                                        final nextQty = quantity >= 99
+                                            ? quantity
+                                            : quantity + 1;
                                         cart.updateQuantity(i, nextQty);
                                         setQuantity(nextQty);
                                       },
@@ -248,53 +264,61 @@ class _CartScreenState extends State<CartScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      TextButton(
-                                        child: Container(
-                                          height: 27,
-                                          width: 27,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.greenButton,
-                                            borderRadius: BorderRadius.circular(
-                                              9,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.25,
+                                      SizedBox(
+                                        height: 27,
+                                        width: 27,
+                                        child: TextButton(
+                                          style: TextButton.styleFrom(
+                                            minimumSize: const Size(27, 27),
+                                            padding: EdgeInsets.zero,
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
+                                          ),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.greenButton,
+                                              borderRadius:
+                                                  BorderRadius.circular(9),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withValues(alpha: 0.25),
+                                                  blurRadius: 4,
+                                                  offset: const Offset(0, 4),
                                                 ),
-                                                blurRadius: 4,
-                                                offset: const Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: item.quantity == 1
-                                                ? const Icon(
-                                                    Icons.delete,
-                                                    color: Color.fromARGB(
-                                                      255,
-                                                      149,
-                                                      14,
-                                                      12,
+                                              ],
+                                            ),
+                                            child: Center(
+                                              child: item.quantity == 1
+                                                  ? const Icon(
+                                                      Icons.delete,
+                                                      color: Color.fromARGB(
+                                                        255,
+                                                        149,
+                                                        14,
+                                                        12,
+                                                      ),
+                                                      size: 16,
+                                                    )
+                                                  : const Text(
+                                                      "-",
+                                                      style: TextStyle(
+                                                        fontFamily: "CarterOne",
+                                                        color:
+                                                            AppColors.brownDark,
+                                                        fontSize: 20,
+                                                      ),
                                                     ),
-                                                    size: 16,
-                                                  )
-                                                : const Text(
-                                                    "-",
-                                                    style: TextStyle(
-                                                      fontFamily: "CarterOne",
-                                                      color:
-                                                          AppColors.brownDark,
-                                                      fontSize: 20,
-                                                    ),
-                                                  ),
+                                            ),
                                           ),
-                                        ),
-                                        onPressed: () => cart.updateQuantity(
-                                          i,
-                                          item.quantity - 1,
+                                          onPressed: () => cart.updateQuantity(
+                                            i,
+                                            item.quantity - 1,
+                                          ),
                                         ),
                                       ),
+                                      SizedBox(width: 12),
+
                                       Text(
                                         '${item.quantity}',
                                         style: const TextStyle(
@@ -303,39 +327,49 @@ class _CartScreenState extends State<CartScreen> {
                                           fontWeight: FontWeight.w700,
                                         ),
                                       ),
-                                      TextButton(
-                                        child: Container(
-                                          height: 27,
-                                          width: 27,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.greenButton,
-                                            borderRadius: BorderRadius.circular(
-                                              9,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.25,
+                                      SizedBox(width: 12),
+
+                                      SizedBox(
+                                        height: 27,
+                                        width: 27,
+                                        child: TextButton(
+                                          style: TextButton.styleFrom(
+                                            minimumSize: const Size(27, 27),
+                                            padding: EdgeInsets.zero,
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
+                                          ),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.greenButton,
+                                              borderRadius:
+                                                  BorderRadius.circular(9),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withValues(alpha: 0.25),
+                                                  blurRadius: 4,
+                                                  offset: const Offset(0, 4),
                                                 ),
-                                                blurRadius: 4,
-                                                offset: const Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              "+",
-                                              style: TextStyle(
-                                                fontFamily: "CarterOne",
-                                                color: AppColors.brownDark,
-                                                fontSize: 20,
+                                              ],
+                                            ),
+                                            child: const Center(
+                                              child: Text(
+                                                "+",
+                                                style: TextStyle(
+                                                  fontFamily: "CarterOne",
+                                                  color: AppColors.brownDark,
+                                                  fontSize: 20,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        onPressed: () => cart.updateQuantity(
-                                          i,
-                                          item.quantity + 1,
+                                          onPressed: () => cart.updateQuantity(
+                                            i,
+                                            item.quantity >= 99
+                                                ? item.quantity
+                                                : item.quantity + 1,
+                                          ),
                                         ),
                                       ),
                                     ],
