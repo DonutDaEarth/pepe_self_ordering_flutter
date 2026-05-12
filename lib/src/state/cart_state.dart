@@ -7,6 +7,7 @@ class CartLine {
     required this.description,
     required this.basePrice,
     required this.selectedSubitems,
+    required this.allSubitems,
     required this.quantity,
     required this.menuId,
     required this.subitemIds,
@@ -16,19 +17,25 @@ class CartLine {
   final String description;
   final int basePrice;
   final Map<String, SubitemData> selectedSubitems;
+  final List<SubitemData> allSubitems;
   final int quantity;
   final int menuId;
   final List<int> subitemIds;
   final String? imageUrl;
 
-  CartLine copyWith({int? quantity}) => CartLine(
+  CartLine copyWith({
+    int? quantity,
+    Map<String, SubitemData>? selectedSubitems,
+    List<int>? subitemIds,
+  }) => CartLine(
     name: name,
     description: description,
     basePrice: basePrice,
-    selectedSubitems: selectedSubitems,
+    selectedSubitems: selectedSubitems ?? this.selectedSubitems,
+    allSubitems: allSubitems,
     quantity: quantity ?? this.quantity,
     menuId: menuId,
-    subitemIds: subitemIds,
+    subitemIds: subitemIds ?? this.subitemIds,
     imageUrl: imageUrl,
   );
 
@@ -69,6 +76,19 @@ class CartState extends ChangeNotifier {
     } else {
       _items[index] = _items[index].copyWith(quantity: quantity);
     }
+    notifyListeners();
+  }
+
+  void updateLine(
+    int index, {
+    Map<String, SubitemData>? selectedSubitems,
+    List<int>? subitemIds,
+  }) {
+    if (index < 0 || index >= _items.length) return;
+    _items[index] = _items[index].copyWith(
+      selectedSubitems: selectedSubitems,
+      subitemIds: subitemIds,
+    );
     notifyListeners();
   }
 

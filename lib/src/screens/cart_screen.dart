@@ -10,6 +10,7 @@ import 'package:pepe_self_ordering_flutter/src/widgets/format_price.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/network_rounded_image.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/primary_button.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/summary_row.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/menu_detail_sheet.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -44,53 +45,55 @@ class _CartScreenState extends State<CartScreen> {
               separatorBuilder: (_, __) => const SizedBox(height: 24),
               itemBuilder: (_, i) {
                 final item = cart.items[i];
-                return SizedBox(
-                  height: 96,
-                  child: Row(
-                    children: [
-                      NetworkRoundedImage(url: item.imageUrl, size: 96),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.name,
-                              style: const TextStyle(
-                                fontFamily: "CarterOne",
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              item.subitemsDisplay(),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: "Actor",
-                                fontSize: 11,
-                              ),
-                            ),
-                            const Spacer(),
-                            Row(
+                final cachedMenu = app.menuById[item.menuId];
+                return InkWell(
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useSafeArea: true,
+                    builder: (_) => MenuDetailSheet(
+                      menu: MenuItemData(
+                        id: item.menuId,
+                        price: item.basePrice,
+                        name: item.name,
+                        desc: item.description,
+                        isSelling: true,
+                        pictureUrl: item.imageUrl,
+                        subitems: cachedMenu?.subitems ?? item.allSubitems,
+                      ),
+                      initialPicked: item.selectedSubitems,
+                      initialQuantity: item.quantity,
+                      allowSelection: true,
+                      onPickedChanged: (nextPicked) {
+                        cart.updateLine(
+                          i,
+                          selectedSubitems: nextPicked,
+                          subitemIds: nextPicked.values
+                              .map((e) => e.id)
+                              .toList(),
+                        );
+                      },
+                      bottomBuilder:
+                          (
+                            context,
+                            total,
+                            quantity,
+                            setQuantity,
+                            canSubmit,
+                            picked,
+                          ) {
+                            return Row(
                               children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      'Rp. ${formatPrice(item.totalPrice())}',
-                                      style: const TextStyle(
-                                        fontFamily: "CarterOne",
-                                        fontSize: 15,
-                                        color: AppColors.orangePrimary,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                  ],
+                                const Text(
+                                  'Quantity In Cart',
+                                  style: TextStyle(
+                                    fontFamily: "CarterOne",
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.orangePrimary,
+                                  ),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     TextButton(
                                       child: Container(
@@ -112,10 +115,10 @@ class _CartScreenState extends State<CartScreen> {
                                           ],
                                         ),
                                         child: Center(
-                                          child: item.quantity == 1
-                                              ? Icon(
+                                          child: quantity == 1
+                                              ? const Icon(
                                                   Icons.delete,
-                                                  color: const Color.fromARGB(
+                                                  color: Color.fromARGB(
                                                     255,
                                                     149,
                                                     14,
@@ -123,7 +126,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   ),
                                                   size: 16,
                                                 )
-                                              : Text(
+                                              : const Text(
                                                   "-",
                                                   style: TextStyle(
                                                     fontFamily: "CarterOne",
@@ -133,20 +136,24 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                         ),
                                       ),
-                                      onPressed: () => cart.updateQuantity(
-                                        i,
-                                        item.quantity - 1,
-                                      ),
+                                      onPressed: () {
+                                        final nextQty = quantity - 1;
+                                        cart.updateQuantity(i, nextQty);
+                                        if (nextQty <= 0) {
+                                          Navigator.pop(context);
+                                          return;
+                                        }
+                                        setQuantity(nextQty);
+                                      },
                                     ),
                                     Text(
-                                      '${item.quantity}',
-                                      style: TextStyle(
+                                      '$quantity',
+                                      style: const TextStyle(
                                         fontSize: 15,
                                         fontFamily: "CarterOne",
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),
-
                                     TextButton(
                                       child: Container(
                                         height: 27,
@@ -166,7 +173,7 @@ class _CartScreenState extends State<CartScreen> {
                                             ),
                                           ],
                                         ),
-                                        child: Center(
+                                        child: const Center(
                                           child: Text(
                                             "+",
                                             style: TextStyle(
@@ -177,19 +184,166 @@ class _CartScreenState extends State<CartScreen> {
                                           ),
                                         ),
                                       ),
-                                      onPressed: () => cart.updateQuantity(
-                                        i,
-                                        item.quantity + 1,
-                                      ),
+                                      onPressed: () {
+                                        final nextQty = quantity + 1;
+                                        cart.updateQuantity(i, nextQty);
+                                        setQuantity(nextQty);
+                                      },
                                     ),
                                   ],
                                 ),
                               ],
-                            ),
-                          ],
+                            );
+                          },
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 96,
+                    child: Row(
+                      children: [
+                        NetworkRoundedImage(url: item.imageUrl, size: 96),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.name,
+                                style: const TextStyle(
+                                  fontFamily: "CarterOne",
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                item.subitemsDisplay(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontFamily: "Actor",
+                                  fontSize: 11,
+                                ),
+                              ),
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        'Rp. ${formatPrice(item.totalPrice())}',
+                                        style: const TextStyle(
+                                          fontFamily: "CarterOne",
+                                          fontSize: 15,
+                                          color: AppColors.orangePrimary,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextButton(
+                                        child: Container(
+                                          height: 27,
+                                          width: 27,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.greenButton,
+                                            borderRadius: BorderRadius.circular(
+                                              9,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.25,
+                                                ),
+                                                blurRadius: 4,
+                                                offset: const Offset(0, 4),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: item.quantity == 1
+                                                ? const Icon(
+                                                    Icons.delete,
+                                                    color: Color.fromARGB(
+                                                      255,
+                                                      149,
+                                                      14,
+                                                      12,
+                                                    ),
+                                                    size: 16,
+                                                  )
+                                                : const Text(
+                                                    "-",
+                                                    style: TextStyle(
+                                                      fontFamily: "CarterOne",
+                                                      color:
+                                                          AppColors.brownDark,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                        onPressed: () => cart.updateQuantity(
+                                          i,
+                                          item.quantity - 1,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${item.quantity}',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontFamily: "CarterOne",
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        child: Container(
+                                          height: 27,
+                                          width: 27,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.greenButton,
+                                            borderRadius: BorderRadius.circular(
+                                              9,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.25,
+                                                ),
+                                                blurRadius: 4,
+                                                offset: const Offset(0, 4),
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              "+",
+                                              style: TextStyle(
+                                                fontFamily: "CarterOne",
+                                                color: AppColors.brownDark,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: () => cart.updateQuantity(
+                                          i,
+                                          item.quantity + 1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },

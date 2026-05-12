@@ -9,6 +9,7 @@ import 'package:pepe_self_ordering_flutter/src/widgets/app_header.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/format_price.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/network_rounded_image.dart';
 import 'package:pepe_self_ordering_flutter/src/widgets/primary_button.dart';
+import 'package:pepe_self_ordering_flutter/src/screens/menu_detail_sheet.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
@@ -45,6 +46,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       categories = q.isEmpty
           ? await app.menuRepo.getOutletMenus(app.outletId!)
           : await app.menuRepo.searchMenus(app.outletId!, q);
+      app.cacheMenus(categories);
     } catch (e) {
       error = e.toString();
     }
@@ -143,7 +145,36 @@ class _MenuCard extends StatelessWidget {
           context: context,
           isScrollControlled: true,
           useSafeArea: true,
-          builder: (_) => _MenuDetailSheet(menu: menu),
+          builder: (_) => MenuDetailSheet(
+            menu: menu,
+            bottomBuilder:
+                (context, total, quantity, setQuantity, canSubmit, picked) {
+                  return PrimaryButton(
+                    text: 'Add To Cart',
+                    enabled: canSubmit,
+                    onPressed: canSubmit
+                        ? () {
+                            context.read<CartState>().add(
+                              CartLine(
+                                name: menu.name,
+                                description: menu.desc,
+                                basePrice: menu.price,
+                                selectedSubitems: picked,
+                                allSubitems: menu.subitems,
+                                quantity: quantity,
+                                menuId: menu.id,
+                                subitemIds: picked.values
+                                    .map((e) => e.id)
+                                    .toList(),
+                                imageUrl: menu.pictureUrl,
+                              ),
+                            );
+                            Navigator.pop(context);
+                          }
+                        : null,
+                  );
+                },
+          ),
         ),
         child: SizedBox(
           height: 96,
@@ -188,219 +219,6 @@ class _MenuCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _MenuDetailSheet extends StatefulWidget {
-  const _MenuDetailSheet({required this.menu});
-  final MenuItemData menu;
-  @override
-  State<_MenuDetailSheet> createState() => _MenuDetailSheetState();
-}
-
-class _MenuDetailSheetState extends State<_MenuDetailSheet> {
-  final Map<String, SubitemData> picked = {};
-  int qty = 1;
-  @override
-  Widget build(BuildContext context) {
-    final grouped = <String, List<SubitemData>>{};
-    for (final item in widget.menu.subitems) {
-      final category = item.category.trim().isEmpty
-          ? 'Options'
-          : item.category.trim();
-      grouped.putIfAbsent(category, () => []).add(item);
-    }
-    final hasRequiredSelections =
-        grouped.isEmpty ||
-        grouped.keys.every((category) => picked[category] != null);
-    final total =
-        (widget.menu.price +
-            picked.values.fold<int>(0, (p, e) => p + e.price.toInt())) *
-        qty;
-    final height = MediaQuery.of(context).size.height;
-    return Container(
-      height: height,
-      color: AppColors.beigeLight,
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      NetworkRoundedImage(
-                        url: widget.menu.pictureUrl,
-                        size: 180,
-                        detailMode: true,
-                      ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                              ),
-                              child: Text(
-                                widget.menu.name,
-                                style: const TextStyle(
-                                  fontFamily: "CarterOne",
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                              ),
-                              child: Text(widget.menu.desc),
-                            ),
-                            const SizedBox(height: 12),
-                            ...grouped.entries.expand(
-                              (entry) => [
-                                const Divider(
-                                  color: AppColors.orangeDivider,
-                                  thickness: 2,
-                                ),
-                                const SizedBox(height: 4),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                  ),
-                                  child: Text(
-                                    entry.key,
-                                    style: const TextStyle(
-                                      fontFamily: "Actor",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                ...entry.value.map(
-                                  (s) => InkWell(
-                                    onTap: () =>
-                                        setState(() => picked[entry.key] = s),
-                                    child: Row(
-                                      children: [
-                                        Radio<int>(
-                                          value: s.id,
-                                          groupValue: picked[entry.key]?.id,
-                                          onChanged: (_) => setState(
-                                            () => picked[entry.key] = s,
-                                          ),
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          visualDensity: VisualDensity.compact,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          s.name,
-                                          style: TextStyle(
-                                            fontFamily: "CarterOne",
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        if (s.price != 0)
-                                          Text(
-                                            '+ Rp. ${formatPrice(s.price)}',
-                                            style: TextStyle(
-                                              fontFamily: "CarterOne",
-                                              color: AppColors.orangePrimary
-                                                  .withOpacity(0.75),
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                color: AppColors.creamBackground,
-                padding: const EdgeInsets.fromLTRB(19, 9, 19, 23),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Total Item Price:',
-                          style: const TextStyle(
-                            fontFamily: "CarterOne",
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.orangePrimary,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          'Rp. ${formatPrice(total)}',
-                          style: const TextStyle(
-                            fontFamily: "CarterOne",
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.orangePrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    PrimaryButton(
-                      text: 'Add To Cart',
-                      enabled: hasRequiredSelections,
-                      onPressed: hasRequiredSelections
-                          ? () {
-                              context.read<CartState>().add(
-                                CartLine(
-                                  name: widget.menu.name,
-                                  description: widget.menu.desc,
-                                  basePrice: widget.menu.price,
-                                  selectedSubitems: picked,
-                                  quantity: qty,
-                                  menuId: widget.menu.id,
-                                  subitemIds: picked.values
-                                      .map((e) => e.id)
-                                      .toList(),
-                                  imageUrl: widget.menu.pictureUrl,
-                                ),
-                              );
-                              Navigator.pop(context);
-                            }
-                          : null,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            top: 32,
-            right: 12,
-            child: IconButton(
-              iconSize: 32,
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close, color: AppColors.brownDark),
-            ),
-          ),
-        ],
       ),
     );
   }

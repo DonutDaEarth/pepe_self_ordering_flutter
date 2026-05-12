@@ -10,6 +10,8 @@ class AppState extends ChangeNotifier {
   late final MenuRepository menuRepo = MenuRepository(storage);
   late final OrderRepository orderRepo = OrderRepository(storage);
 
+  final Map<int, MenuItemData> menuById = {};
+
   bool isBootLoading = true;
   String startRoute = '/register';
   String tableNumber = 'Table A7B';
@@ -37,11 +39,21 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void cacheMenus(List<MenuCategoryData> categories) {
+    for (final category in categories) {
+      for (final menu in category.menus) {
+        menuById[menu.id] = menu;
+      }
+    }
+  }
+
   static ScannedQrData? parseQr(String raw) {
     try {
       final decoded = raw.startsWith('{') ? raw : utf8.decode(hexToBytes(raw));
       final json = jsonDecode(decoded);
-      if (json['id'] == null || json['outlet'] == null || json['table'] == null) {
+      if (json['id'] == null ||
+          json['outlet'] == null ||
+          json['table'] == null) {
         return null;
       }
       return ScannedQrData(
