@@ -85,11 +85,12 @@ class _CartScreenState extends State<CartScreen> {
                             return Row(
                               children: [
                                 const Text(
-                                  'Quantity In Cart',
+                                  'Quantity In Cart:',
                                   style: TextStyle(
                                     fontFamily: "CarterOne",
                                     fontWeight: FontWeight.w700,
-                                    color: AppColors.orangePrimary,
+                                    fontSize: 25,
+                                    color: AppColors.brownDark,
                                   ),
                                 ),
                                 const Spacer(),
@@ -97,10 +98,10 @@ class _CartScreenState extends State<CartScreen> {
                                   children: [
                                     TextButton(
                                       child: Container(
-                                        height: 27,
-                                        width: 27,
+                                        height: 36,
+                                        width: 36,
                                         decoration: BoxDecoration(
-                                          color: AppColors.greenButton,
+                                          color: AppColors.orangePrimary,
                                           borderRadius: BorderRadius.circular(
                                             9,
                                           ),
@@ -131,7 +132,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   style: TextStyle(
                                                     fontFamily: "CarterOne",
                                                     color: AppColors.brownDark,
-                                                    fontSize: 20,
+                                                    fontSize: 30,
                                                   ),
                                                 ),
                                         ),
@@ -149,17 +150,17 @@ class _CartScreenState extends State<CartScreen> {
                                     Text(
                                       '$quantity',
                                       style: const TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 28,
                                         fontFamily: "CarterOne",
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                     TextButton(
                                       child: Container(
-                                        height: 27,
-                                        width: 27,
+                                        height: 36,
+                                        width: 36,
                                         decoration: BoxDecoration(
-                                          color: AppColors.greenButton,
+                                          color: AppColors.orangePrimary,
                                           borderRadius: BorderRadius.circular(
                                             9,
                                           ),
@@ -179,7 +180,7 @@ class _CartScreenState extends State<CartScreen> {
                                             style: TextStyle(
                                               fontFamily: "CarterOne",
                                               color: AppColors.brownDark,
-                                              fontSize: 20,
+                                              fontSize: 30,
                                             ),
                                           ),
                                         ),
