@@ -63,18 +63,30 @@ class AuthRepository {
   String? _extractErrorMessage(DioException e) {
     final status = e.response?.statusCode ?? 0;
     final data = e.response?.data;
+    String? normalizeMessage(String? raw) {
+      if (raw == null) return null;
+      final msg = raw.trim();
+      if (msg.isEmpty) return null;
+      if (msg.contains("Expected string to match 'email' format") ||
+          msg.contains('Property \'email\' should be email')) {
+        return 'Please enter a valid email address';
+      }
+      return msg;
+    }
+
     if (data is Map<String, dynamic>) {
-      final message = data['message']?.toString();
-      if (message != null && message.trim().isNotEmpty) return message;
-      final summary = data['summary']?.toString();
-      if (summary != null && summary.trim().isNotEmpty) return summary;
+      final message = normalizeMessage(data['message']?.toString());
+      if (message != null) return message;
+      final summary = normalizeMessage(data['summary']?.toString());
+      if (summary != null) return summary;
       final errors = data['errors'];
       if (errors is List && errors.isNotEmpty) {
         final first = errors.first;
         if (first is Map<String, dynamic>) {
-          final errorMsg =
-              first['summary']?.toString() ?? first['message']?.toString();
-          if (errorMsg != null && errorMsg.trim().isNotEmpty) return errorMsg;
+          final errorMsg = normalizeMessage(
+            first['summary']?.toString() ?? first['message']?.toString(),
+          );
+          if (errorMsg != null) return errorMsg;
         }
       }
     }
