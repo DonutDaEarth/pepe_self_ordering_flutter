@@ -73,7 +73,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 16),
                     if (error != null)
-                      Text(error!, style: const TextStyle(color: Colors.red)),
+                      Text(
+                        error!,
+                        style: const TextStyle(
+                          fontFamily: "CarterOne",
+                          color: Colors.red,
+                        ),
+                      ),
                     const SizedBox(height: 64),
                     PrimaryButton(
                       text: loading ? 'Loading...' : 'Login',
